@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 export const userAuth = (req, res, next) => {
 
     const token = req.cookies.token;
@@ -9,8 +10,9 @@ export const userAuth = (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (decoded.id){
-            req.body.userId = decoded.id;
+        if (decoded.userId){
+            req.userId = decoded.userId;
+            // console.log(req.userId);
         } else {
             return res.status(401).json({ message: 'Unauthorized , Invalid token' });
         }
