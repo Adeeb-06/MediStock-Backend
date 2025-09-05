@@ -1,0 +1,32 @@
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import connectMongoDb from './config/mongodb.js';
+import dotenv from 'dotenv';
+import authRouter from './routers/authRouter.js';
+
+dotenv.config({ path: '.env' });
+
+
+const app = express();
+
+
+connectMongoDb();
+
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+app.use('/api/auth', authRouter);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
