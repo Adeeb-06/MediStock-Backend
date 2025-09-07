@@ -2,9 +2,9 @@ import companyModel from "../models/Company.js";
 import medicineModel from "../models/Medicine.js";
 
 export const createMedicine = async (req, res) => {
-    const { name, price, stock, company } = req.body;
+    const { name, price, company } = req.body;
     try {
-        if (!name  || !price || !stock || !company) {
+        if (!name  || !price  || !company) {
             return res.status(400).json({ message: "Medicine required" });
         }
         const companyId = await companyModel.findById(company);
@@ -14,7 +14,6 @@ export const createMedicine = async (req, res) => {
         const newMedicine = new medicineModel({
             name,
             price,
-            stock,
             company
         });
         
