@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectMongoDb from './config/mongodb.js';
 import dotenv from 'dotenv';
 import authRouter from './routers/authRouter.js';
+import companyRouter from './routers/companyRouter.js';
 
 dotenv.config({ path: '.env' });
 
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.use('/api/auth', authRouter);
+app.use('/api/company', companyRouter);
 
 app.listen(8000, () => {
   console.log('Server is running on port 3000');
