@@ -5,6 +5,7 @@ import connectMongoDb from './config/mongodb.js';
 import dotenv from 'dotenv';
 import authRouter from './routers/authRouter.js';
 import companyRouter from './routers/companyRouter.js';
+import medicineRouter from './routers/medicineRouter.js';
 
 dotenv.config({ path: '.env' });
 
@@ -28,6 +29,8 @@ app.get('/', (req, res) => {
 });
 app.use('/api/auth', authRouter);
 app.use('/api/company', companyRouter);
+app.use('/api/medicine', medicineRouter);
+
 
 app.listen(8000, () => {
   console.log('Server is running on port 3000');

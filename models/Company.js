@@ -6,7 +6,7 @@ const companySchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    // medicines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Medicine' }]
+    medicines: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Medicine' }]
 });
 
 const companyModel =  mongoose.models.company || mongoose.model('Company', companySchema) 
