@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import authRouter from './routers/authRouter.js';
 import companyRouter from './routers/companyRouter.js';
 import medicineRouter from './routers/medicineRouter.js';
+import stockRouter from './routers/stockRouter.js';
 
 dotenv.config({ path: '.env' });
 
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/company', companyRouter);
 app.use('/api/medicine', medicineRouter);
+app.use('/api/stock', stockRouter);
 
 
 app.listen(8000, () => {

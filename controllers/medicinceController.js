@@ -2,24 +2,37 @@ import companyModel from "../models/Company.js";
 import medicineModel from "../models/Medicine.js";
 
 export const createMedicine = async (req, res) => {
-    const { name, price, company } = req.body;
+    const userId = req.userId
+    const { medicines } = req.body;
     try {
-        if (!name  || !price  || !company) {
+        if (!Array.isArray(medicines) || medicines.length === 0) {
             return res.status(400).json({ message: "Medicine required" });
         }
-        const companyId = await companyModel.findById(company);
-        if (!companyId) {
+        
+        const companyIds = [...new Set(medicines.map(m => m.company))];
+        const companies = await companyModel.find({_id:{$in:companyIds}});
+        if (companies.length !== companyIds.length) {
             return res.status(400).json({ message: "Invalid company" });
         }
-        const newMedicine = new medicineModel({
-            name,
-            price,
-            company
-        });
-        
-        await newMedicine.save();
-        companyId.medicines.push(newMedicine._id);
-        await companyId.save();
+
+        const medicinesData = medicines.map(m => ({
+            owner: userId,
+            name: m.name,
+            price: m.price,
+            company: m.company
+        }));
+
+
+        const newMedicine = await medicineModel.insertMany(medicinesData);
+
+
+        for (const company of companies) {
+            const relatedMedicines = newMedicine.filter(m => m.company.toString() === company._id.toString());
+
+            company.medicines.push(...relatedMedicines.map(m => m._id));
+            await company.save();
+            
+        }
 
         res.status(201).json({ message: "Medicines added" }, {success: true});
 
