@@ -41,3 +41,14 @@ export const createMedicine = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+export const getMedicines = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const medicines = await medicineModel.find({owner: userId});
+        res.status(200).json({ message: "Medicines retrieved successfully", medicines });
+    } catch (error) {
+        console.log(error, 'medicine retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}
