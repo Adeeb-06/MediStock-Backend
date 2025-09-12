@@ -28,7 +28,7 @@ export const signUp = async (req, res) => {
         });
         await newUser.save();
 
-        const token = jwt.sign({ userId: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' , sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' , maxAge: 8 * 60 * 60 * 1000 }); // 8 hours
 

@@ -8,6 +8,13 @@ export const createMedicine = async (req, res) => {
         if (!Array.isArray(medicines) || medicines.length === 0) {
             return res.status(400).json({ message: "Medicine required" });
         }
+
+        for (const medicine of medicines) {
+            const nameExists = await medicineModel.findOne({ name: medicine.name });
+            if (nameExists) {
+                return res.status(400).json({ message: "Medicine name already exists" });
+            }
+        }
         
         const companyIds = [...new Set(medicines.map(m => m.company))];
         const companies = await companyModel.find({_id:{$in:companyIds}});

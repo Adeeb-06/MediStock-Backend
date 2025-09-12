@@ -170,3 +170,31 @@ export const getAllStocks = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+
+export const getSales = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const sales = await salesModel.find({ soldBy: userId }).populate('medicine', 'name');
+        res.status(200).json({ message: "All sales retrieved successfully", sales });
+    } catch (error) {
+        console.log(error, 'sales retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+
+export const deleteStock = async (req, res) => {
+    const userId = req.userId;
+    const { stockId } = req.body;
+    try {
+        const stock = await stockModel.findByIdAndDelete(stockId);
+        if (!stock) {
+            return res.status(400).json({ message: "Stock not found" });
+        }
+        res.status(200).json({ message: "Stock deleted successfully" });
+    } catch (error) {
+        console.log(error, 'stock deletion error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}
