@@ -114,6 +114,7 @@ export const sellStock = async (req, res) => {
                     soldStocks.push({
                         soldBy: userId,
                         medicine: med._id,
+                        totalPrice: Number((med.price * soldFromThisStock).toFixed(2)),
                         soldQuantity: soldFromThisStock,
                         stockId: stock._id,
                     });
@@ -164,6 +165,7 @@ export const getAllStocks = async (req, res) => {
     const userId = req.userId;
     try {
         const stocks = await stockModel.find({ owner: userId }).populate('medicine', 'name');
+        
         res.status(200).json({ message: "All stocks retrieved successfully", stocks });
     } catch (error) {
         console.log(error, 'stock retrieval error');
