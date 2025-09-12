@@ -37,3 +37,19 @@ export const getAllCompanies = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+export const getCompanyById = async (req, res) => {
+    const userId = req.userId;
+    const { companyId } = req.body;
+    try {
+        const company = await companyModel.findById(companyId)
+        if (!company) {
+            return res.status(400).json({ message: "Invalid company" });
+        }
+        const medicines = await company.medicines.map(m => m.toString());
+        res.status(200).json({ message: "Company retrieved successfully", company });
+    } catch (error) {
+        console.log(error, 'company retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}

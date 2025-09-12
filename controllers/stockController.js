@@ -1,6 +1,5 @@
 import medicineModel from "../models/Medicine.js";
 import stockModel from "../models/Stock.js";
-import purchaseStockModel from "../models/PurchaseStocks.js";
 import salesModel from "../models/Sales.js";
 
 export const createStock = async (req, res) => {
@@ -25,6 +24,7 @@ export const createStock = async (req, res) => {
                     owner: userId,
                     medicine: s.medicine,
                     quantity: s.quantity,
+                    qtyCopy: s.quantity,
                     totalPrice,
                     expiryDate: s.expiryDate
                 };
@@ -33,7 +33,7 @@ export const createStock = async (req, res) => {
 
         // Insert into both collections
         const newStock = await stockModel.insertMany(enrichedStocks);
-        const purchaseStocks = await purchaseStockModel.insertMany(enrichedStocks);
+        // const purchaseStocks = await purchaseStockModel.insertMany(enrichedStocks);
 
         // update medicines
         for (const stock of newStock) {
@@ -154,6 +154,17 @@ export const getStockByMedicine = async (req, res) => {
         const stocks = await stockModel.find({ owner: userId, medicine: medicine._id });
         // const stocks = medicine.stocks.filter(s => s.owner.toString() === userId.toString());
         res.status(200).json({ message: "Stock retrieved successfully", stocks });
+    } catch (error) {
+        console.log(error, 'stock retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+export const getAllStocks = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const stocks = await stockModel.find({ owner: userId }).populate('medicine', 'name');
+        res.status(200).json({ message: "All stocks retrieved successfully", stocks });
     } catch (error) {
         console.log(error, 'stock retrieval error');
         res.status(500).json({ message: 'Server error' });

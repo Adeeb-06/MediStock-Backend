@@ -45,7 +45,7 @@ export const createMedicine = async (req, res) => {
 export const getMedicines = async (req, res) => {
     const userId = req.userId;
     try {
-        const medicines = await medicineModel.find({owner: userId});
+        const medicines = await medicineModel.find({owner: userId}).populate('company' , 'name');
         res.status(200).json({ message: "Medicines retrieved successfully", medicines });
     } catch (error) {
         console.log(error, 'medicine retrieval error');
