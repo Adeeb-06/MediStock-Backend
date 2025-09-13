@@ -25,7 +25,6 @@ export const createMedicine = async (req, res) => {
         const medicinesData = medicines.map(m => ({
             owner: userId,
             name: m.name,
-            price: m.price,
             company: m.company
         }));
 

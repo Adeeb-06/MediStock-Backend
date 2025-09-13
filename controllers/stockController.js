@@ -17,12 +17,13 @@ export const createStock = async (req, res) => {
         // resolve all totalPrice calculations properly
         const enrichedStocks = await Promise.all(
             stocks.map(async (s) => {
-                const medicine = medicines.find(m => m._id.toString() === s.medicine.toString());
-                const totalPrice = s.quantity * medicine.price;
+                // const medicine = medicines.find(m => m._id.toString() === s.medicine.toString());
+                const totalPrice = s.quantity * s.price;
 
                 return {
                     owner: userId,
                     medicine: s.medicine,
+                    medicinePrice: s.price,
                     quantity: s.quantity,
                     qtyCopy: s.quantity,
                     totalPrice,
@@ -108,13 +109,14 @@ export const sellStock = async (req, res) => {
                 }
 
                 stock.owner = userId;
+                
                 await stock.save();
 
                 if (soldFromThisStock > 0) {
                     soldStocks.push({
                         soldBy: userId,
                         medicine: med._id,
-                        totalPrice: Number((med.price * soldFromThisStock).toFixed(2)),
+                        totalPrice: Number((stock.medicinePrice * soldFromThisStock).toFixed(2)),
                         soldQuantity: soldFromThisStock,
                         stockId: stock._id,
                     });
