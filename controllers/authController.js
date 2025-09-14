@@ -82,13 +82,31 @@ export const signOut = (req, res) => {
 }
 
 
-export const isAuthenticated = (req, res) => {
+export const isAuthenticated = async(req, res) => {
 try {
     const userId = req.userId;
-    console.log(userId)
-    res.status(200).json({ message: 'User is authenticated' , userId:{userId} } );
+    // console.log(userId)
+    const user = await pharmacyModel.findById(userId);
+    res.status(200).json({ message: 'User is authenticated' , user } );
 } catch (error) {
     console.log('isAuthenticated error', error);
     res.status(500).json({ message: 'Internal server error' });
 }
+}
+
+export const getPharmacyById = async (req, res) => {
+    const userId = req.userId;
+    // const { pharmacyId } = req.body;
+    try {
+        // console.log(pharmacyId, 'pharmacyId')
+        const pharmacy = await pharmacyModel.findById(userId);
+        if (!pharmacy) {
+            return res.status(400).json({ message: "Invalid pharmacy" });
+        }
+        const medicines = await pharmacy.medicines.map(m => m.toString());
+        res.status(200).json({ message: "Pharmacy retrieved successfully", pharmacy });
+    } catch (error) {
+        console.log(error, 'pharmacy retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
 }
