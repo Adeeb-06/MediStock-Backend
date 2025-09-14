@@ -202,3 +202,20 @@ export const deleteStock = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+export const getSalesByDate = async (req, res) => {
+    const userId = req.userId;
+    const { startDate, endDate } = req.body;
+    try {
+         const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Ensure the end date includes the whole day
+        end.setHours(23, 59, 59, 999);
+        const sales = await salesModel.find({ soldBy: userId, createdAt: { $gte: start, $lte: end } }).populate('medicine', 'name');
+        res.status(200).json({ message: "All sales retrieved successfully", sales });
+    } catch (error) {
+        console.log(error, 'sales retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}

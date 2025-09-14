@@ -28,9 +28,9 @@ export const createCompany = async (req, res) => {
 
 
 export const getAllCompanies = async (req, res) => {
+  const userId = req.userId;
     try {
-        const userId = req.userId;
-        const companies = await companyModel.find({owner: userId});
+        const companies = await companyModel.find({owner: userId}).populate('medicines');
         res.status(200).json({ message: "All companies", companies });
     } catch (error) {
         console.log(error, 'get all companies error');
