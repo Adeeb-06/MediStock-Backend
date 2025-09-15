@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-  origin: `https://medi-stock-adeeb.vercel.app`,
+  origin: ['https://medi-stock-adeeb.vercel.app', 'http://localhost:3000'],
   credentials: true
 }));
 app.get('/', (req, res) => {
