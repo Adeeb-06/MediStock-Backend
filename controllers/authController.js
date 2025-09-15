@@ -1,6 +1,6 @@
 import pharmacyModel from "../models/Pharmacy.js";
 import bcrypt from 'bcrypt';
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 
 export const signUp = async (req, res) => {
@@ -33,7 +33,7 @@ export const signUp = async (req, res) => {
 
         res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' , sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax' , maxAge: 8 * 60 * 60 * 1000 }); // 8 hours
 
-        res.status(201).json({ message: 'User created successfully' } , { success: true });
+        res.status(201).json({ message: 'User created successfully' ,success: true});
 
     } catch (error) {
         console.log('signUp error', error);
