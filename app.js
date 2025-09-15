@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: `${process.env.NEXT_PUBLIC_API_URL}`,
   credentials: true
 }));
 app.get('/', (req, res) => {
