@@ -53,3 +53,18 @@ export const getCompanyById = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+export const updateCompany = async (req, res) => {
+    const userId = req.userId;
+    const { companyId, name } = req.body;
+    try {
+        const company = await companyModel.findByIdAndUpdate(companyId, { name });
+        if (!company) {
+            return res.status(400).json({ message: "Company not found" });
+        }
+        res.status(200).json({ message: "Company updated successfully", company });
+    } catch (error) {
+        console.log(error, 'company update error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}

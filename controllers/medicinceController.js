@@ -58,3 +58,33 @@ export const getMedicines = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+export const updateMedicine = async (req, res) => {
+    const userId = req.userId;
+    const { medicineId, name, company } = req.body;
+    try {
+        const medicine = await medicineModel.findByIdAndUpdate(medicineId, { name, company });
+        if (!medicine) {
+            return res.status(400).json({ message: "Medicine not found" });
+        }
+        res.status(200).json({ message: "Medicine updated successfully", medicine });
+    } catch (error) {
+        console.log(error, 'medicine update error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+export const getMedicineById = async (req, res) => {
+    const userId = req.userId;
+    const { medicineId  } = req.body;
+    try {
+        const medicine = await medicineModel.find({owner: userId, _id: medicineId}).populate('company' , 'name');
+        if (!medicine) {
+            return res.status(400).json({ message: "Medicine not found" });
+        }
+        res.status(200).json({ message: "Medicine retrieved successfully", medicine });
+    } catch (error) {
+        console.log(error, 'medicine retrieval error');
+        res.status(500).json({ message: 'Server error' });
+    }
+}   
