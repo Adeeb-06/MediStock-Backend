@@ -10,7 +10,7 @@ export const createMedicine = async (req, res) => {
         }
 
         for (const medicine of medicines) {
-            const nameExists = await medicineModel.findOne({ name: medicine.name });
+            const nameExists = await medicineModel.findOne({ name: medicine.name, owner: userId });
             if (nameExists) {
                 return res.status(400).json({ message: "Medicine name already exists" });
             }
