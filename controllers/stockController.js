@@ -59,12 +59,12 @@ export const createStock = async (req, res) => {
 
 export const sellStock = async (req, res) => {
     const userId = req.userId;
-    const { stocks } = req.body; 
+    const { stocks } = req.body;
     // stocks example: [{ medicine: "id1", quantity: 5 }, { medicine: "id2", quantity: 3 }]
 
     try {
         // 1. Collect all medicine IDs
-        if(!Array.isArray(stocks) || stocks.length === 0){
+        if (!Array.isArray(stocks) || stocks.length === 0) {
             return res.status(400).json({ message: "Stocks required" });
         }
         const medicineIds = [...new Set(stocks.map(s => s.medicine))];
@@ -100,7 +100,10 @@ export const sellStock = async (req, res) => {
                 let expiryDate = stock.expiryDate;
 
                 if (expiryDate < new Date()) {
-                     if (stock.quantity >= remainingQuantity) {
+                    continue; // skip this stock
+                }
+
+                if (stock.quantity >= remainingQuantity) {
                     stock.quantity -= remainingQuantity;
                     soldFromThisStock = remainingQuantity;
                     remainingQuantity = 0;
@@ -111,7 +114,7 @@ export const sellStock = async (req, res) => {
                 }
 
                 stock.owner = userId;
-                
+
                 await stock.save();
 
                 if (soldFromThisStock > 0) {
@@ -123,19 +126,16 @@ export const sellStock = async (req, res) => {
                         stockId: stock._id,
                     });
                 }
-                }
-
-               
             }
 
             // reduce main medicine stock
-            if(med.stockNumber > 0){
+            if (med.stockNumber > 0) {
                 med.stockNumber -= quantity;
                 await med.save();
             }
             if (soldStocks.length > 0) {
                 await salesModel.insertMany(soldStocks);
-                
+
             }
         }
 
@@ -172,7 +172,7 @@ export const getAllStocks = async (req, res) => {
     const userId = req.userId;
     try {
         const stocks = await stockModel.find({ owner: userId }).populate('medicine', 'name');
-        
+
         res.status(200).json({ message: "All stocks retrieved successfully", stocks });
     } catch (error) {
         console.log(error, 'stock retrieval error');
@@ -212,7 +212,7 @@ export const getSalesByDate = async (req, res) => {
     const userId = req.userId;
     const { startDate, endDate } = req.body;
     try {
-         const start = new Date(startDate);
+        const start = new Date(startDate);
         const end = new Date(endDate);
 
         // Ensure the end date includes the whole day
