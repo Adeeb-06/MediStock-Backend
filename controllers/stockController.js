@@ -97,8 +97,10 @@ export const sellStock = async (req, res) => {
                 if (remainingQuantity === 0) break;
 
                 let soldFromThisStock = 0;
+                let expiryDate = stock.expiryDate;
 
-                if (stock.quantity >= remainingQuantity) {
+                if (expiryDate < new Date()) {
+                     if (stock.quantity >= remainingQuantity) {
                     stock.quantity -= remainingQuantity;
                     soldFromThisStock = remainingQuantity;
                     remainingQuantity = 0;
@@ -121,6 +123,9 @@ export const sellStock = async (req, res) => {
                         stockId: stock._id,
                     });
                 }
+                }
+
+               
             }
 
             // reduce main medicine stock
