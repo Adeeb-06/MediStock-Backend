@@ -1,6 +1,7 @@
 import pharmacyModel from "../models/Pharmacy.js";
 import bcrypt from 'bcrypt';
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
+
 
 export const signUp = async (req, res) => {
 
