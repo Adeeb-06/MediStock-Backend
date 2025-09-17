@@ -18,12 +18,13 @@ export const createStock = async (req, res) => {
         const enrichedStocks = await Promise.all(
             stocks.map(async (s) => {
                 // const medicine = medicines.find(m => m._id.toString() === s.medicine.toString());
-                const totalPrice = s.quantity * s.price;
+                const totalPrice = s.quantity * s.costPrice;
 
                 return {
                     owner: userId,
                     medicine: s.medicine,
-                    medicinePrice: s.price,
+                    medicinePrice: s.medicinePrice,
+                    costPrice: s.costPrice,
                     quantity: s.quantity,
                     qtyCopy: s.quantity,
                     totalPrice,
@@ -150,23 +151,36 @@ export const sellStock = async (req, res) => {
 };
 
 
-
 export const getStockByMedicine = async (req, res) => {
     const userId = req.userId;
     const { medicineId } = req.body;
+
     try {
-        const medicine = await medicineModel.findById(medicineId).populate('stocks');
-        if (!medicine) {
-            return res.status(400).json({ message: "Invalid medicine" });
+        const stocks = await stockModel.find({
+            owner: userId,
+            medicine: medicineId,
+            quantity: { $gt: 0 }, // only available
+            expiryDate: { $gte: new Date() } // not expired
+        }).sort({ expiryDate: 1 }); // FIFO (earliest expiry first)
+
+        if (!stocks || stocks.length === 0) {
+            return res.status(404).json({ message: "No valid stock found" });
         }
-        const stocks = await stockModel.find({ owner: userId, medicine: medicine._id });
-        // const stocks = medicine.stocks.filter(s => s.owner.toString() === userId.toString());
-        res.status(200).json({ message: "Stock retrieved successfully", stocks });
+
+        // Return first stock (FIFO price)
+        const fifoStock = stocks[0];
+
+        res.status(200).json({
+            message: "Stock retrieved successfully",
+            stock:fifoStock
+        });
+
     } catch (error) {
         console.log(error, 'stock retrieval error');
         res.status(500).json({ message: 'Server error' });
     }
-}
+};
+
 
 export const getAllStocks = async (req, res) => {
     const userId = req.userId;
