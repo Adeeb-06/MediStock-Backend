@@ -185,6 +185,12 @@ export const getStockByMedicine = async (req, res) => {
 export const getAllStocks = async (req, res) => {
     const userId = req.userId;
     try {
+        // Find expired stocks and update their expiredAction if not set
+        await stockModel.updateMany(
+            { owner: userId, expiryDate: { $lt: new Date() }, expiredAction: { $exists: false } },
+            { $set: { expiredAction: "pending" } }
+        );
+
         const stocks = await stockModel.find({ owner: userId }).populate('medicine', 'name');
 
         res.status(200).json({ message: "All stocks retrieved successfully", stocks });
@@ -192,7 +198,39 @@ export const getAllStocks = async (req, res) => {
         console.log(error, 'stock retrieval error');
         res.status(500).json({ message: 'Server error' });
     }
-}
+};
+
+
+export const updateExpiredStockAction = async (req, res) => {
+    const userId = req.userId;
+    const { stockId, action } = req.body;
+
+    try {
+        if (!["returned", "disposed"].includes(action)) {
+            return res.status(400).json({ message: "Invalid action" });
+        }
+
+        const stock = await stockModel.findOne({ _id: stockId, owner: userId });
+        if (!stock) {
+            return res.status(404).json({ message: "Stock not found" });
+        }
+
+        if (stock.expiryDate >= new Date()) {
+            return res.status(400).json({ message: "Stock is not expired yet" });
+        }
+
+        stock.expiredAction = action;
+        stock.expiredActionDate = new Date();
+        await stock.save();
+
+        res.status(200).json({ message: "Expired stock action updated", stock });
+    } catch (error) {
+        console.log(error, 'expired stock action error');
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
 
 
 export const getSales = async (req, res) => {
