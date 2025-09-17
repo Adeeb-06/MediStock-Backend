@@ -5,6 +5,7 @@ const medicineSchema = new mongoose.Schema(
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'Pharmacy' },
     name: { type: String, required: true },
     stockNumber: { type: Number, default: 0 },
+    soldQuantity: { type: Number, default: 0 },
     stocks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stock' }],
     company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
   },

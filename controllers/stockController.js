@@ -131,7 +131,8 @@ export const sellStock = async (req, res) => {
 
             // reduce main medicine stock
             if (med.stockNumber > 0) {
-                med.stockNumber -= quantity;
+                med.soldQuantity = Number(med.soldQuantity || 0) + Number(quantity);
+                med.stockNumber = Number(med.stockNumber || 0) - Number(quantity);
                 await med.save();
             }
             if (soldStocks.length > 0) {
@@ -172,7 +173,7 @@ export const getStockByMedicine = async (req, res) => {
 
         res.status(200).json({
             message: "Stock retrieved successfully",
-            stock:fifoStock
+            stock: fifoStock
         });
 
     } catch (error) {
